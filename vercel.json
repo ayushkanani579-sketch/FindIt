@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "version": 2,
   "builds": [
@@ -12,4 +13,20 @@
       "dest": "lost.py"
     }
   ]
+=======
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "lost.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "lost.py"
+    }
+  ]
+>>>>>>> 9cf595f0b860b0f6173ba88129f28c3298d2fd57
 }
