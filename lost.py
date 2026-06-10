@@ -2,12 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from form import RegistrationForm, LoginForm, LostItemForm, FoundItemForm, SearchForm
 import os
-from werkzeug.utils import secure_filename
+import cloudinary
+import cloudinary.uploader
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user, login_required
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
-
+cloudinary.config(
+    cloud_name="dq0wbgvy9",
+    api_key="599899794536779",
+    api_secret="_wFwrHtH65Of5nUGU_P6HT7D-6Y"
+)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 
@@ -101,7 +106,7 @@ class LostItem(db.Model):
         nullable=False
     )
     image_path = db.Column(
-            db.String(255)
+            db.String(500)
         )
 
     location = db.Column(
@@ -171,7 +176,7 @@ class FoundItem(db.Model):
     )
 
     image_path = db.Column(
-        db.String(255)
+        db.String(500)
     )
 
     status = db.Column(
@@ -268,8 +273,12 @@ def lost():
             category = form.category.data
             description = form.description.data
             item_image = form.item_image.data
-            filename = secure_filename(item_image.filename)
-            item_image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            if item_image:
+                upload = cloudinary.uploader.upload(item_image)
+                image_url = upload["secure_url"]
+            else:
+                image_url = None
             location = form.location.data
             date_lost = form.date_lost.data
             phone = form.phone.data
@@ -278,7 +287,7 @@ def lost():
                 item_name=item_name,
                 category=category,
                 description=description,
-                image_path=filename,
+                image_path=image_url,
                 location=location,
                 date_lost=date_lost,
                 contact_phone=phone,
@@ -304,8 +313,12 @@ def found():
             category = form.category.data
             description = form.description.data
             item_image = form.item_image.data
-            filename = secure_filename(item_image.filename)
-            item_image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            if item_image:
+                upload = cloudinary.uploader.upload(item_image)
+                image_url = upload["secure_url"]
+            else:
+                image_url = None
             location = form.location.data
             date_found = form.date_found.data
             phone = form.phone.data
@@ -314,7 +327,7 @@ def found():
                 item_name=item_name,
                 category=category,
                 description=description,
-                image_path=filename,
+                image_path=image_url,
                 location=location,
                 date_found=date_found,
                 phone=phone,

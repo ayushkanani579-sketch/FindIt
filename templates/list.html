@@ -355,13 +355,8 @@
 
     {% if item.image_path %}
 
-    <img
-    src="{{ url_for(
-    'static',
-    filename='uploads/' + item.image_path
-    ) }}"
-    >
-
+   <img src="{{ item.image_path }}" width="250">
+   
     {% endif %}
 
 
