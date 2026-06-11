@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from form import RegistrationForm, LoginForm, LostItemForm, FoundItemForm, SearchForm
+from form import RegistrationForm, LoginForm, LostItemForm, FoundItemForm, SearchForm,ClaimForm
 import os
 import cloudinary
 import cloudinary.uploader
@@ -225,6 +225,12 @@ class ClaimRequest(db.Model):
         nullable=False
     )
 
+    lost_item_id=db.Column(
+        db.Integer,
+        db.ForeignKey('lost_items.id'),
+        nullable=True
+    )
+
 
     status=db.Column(
         db.String(20),
@@ -408,48 +414,59 @@ def list():
         found_items=found_items
     )
 
-@app.route("/claim/<int:id>", methods=["POST"])
+@app.route("/claim/<int:id>", methods=["GET", "POST"])
 @login_required
 def claim(id):
 
     item=FoundItem.query.get_or_404(id)
 
+    form=ClaimForm()
 
-    existing=ClaimRequest.query.filter_by(
-        found_item_id=id,
-        requester_id=current_user.id
-    ).first()
+    if form.validate_on_submit():
+
+        existing = ClaimRequest.query.filter_by(
+            found_item_id=id,
+            requester_id=current_user.id
+        ).first()
 
 
-    if existing:
+        if existing:
+            flash(
+                "Request already sent",
+                "warning"
+            )
+            return redirect(url_for("list"))
+    
+        lost_report=LostItem.query.filter_by(
+        user_id=current_user.id,).first()
 
-        flash(
-        "Request already sent",
-        "warning"
+
+        request=ClaimRequest(
+
+            found_item_id=id,
+            requester_id=current_user.id,
+            lost_item_id=lost_report.id if lost_report else None,
+            message=form.message.data
         )
 
+
+        db.session.add(request)
+        db.session.commit()
+
+
+        flash(
+        "Claim request sent",
+        "success"
+        )
+
+
         return redirect(url_for("list"))
-
-
-    request=ClaimRequest(
-
-        found_item_id=id,
-        requester_id=current_user.id,
-        message="I believe this item belongs to me"
+    
+    return render_template(
+        "claim.html",
+        form=form,
+        item=item
     )
-
-
-    db.session.add(request)
-    db.session.commit()
-
-
-    flash(
-    "Claim request sent",
-    "success"
-    )
-
-
-    return redirect(url_for("list"))
 
 
 @app.route("/requests")

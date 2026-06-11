@@ -75,6 +75,35 @@ Message:
 
 </p>
 
+{% if req.lost_item %}
+
+<h3>Claimer's Lost Report</h3>
+
+<p>
+Item:
+{{ req.lost_item.item_name }}
+</p>
+
+<p>
+Category:
+{{ req.lost_item.category }}
+</p>
+
+<p>
+Location:
+{{ req.lost_item.location }}
+</p>
+
+<p>
+Description:
+{{ req.lost_item.description }}
+</p>
+
+{% else %}
+
+<p>No lost report submitted.</p>
+
+{% endif %}
 
 
 <p>

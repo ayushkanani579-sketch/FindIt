@@ -439,34 +439,17 @@
 
         {% if item.status != "Claimed" %}
 
+        <a 
+        href="{{ url_for('claim', id=item.id) }}"
+        class="contact-btn"
+        style="display:block;text-align:center;text-decoration:none">
 
-        <form action="{{url_for('claim',id=item.id)}}" method="POST">
-
-            <button class="contact-btn">
-
-            Request Claim
-
-            </button>
-
-        </form>
-
-
-
-        <a href="{{ url_for(
-        'claim',
-        id=item.id
-        ) }}">
-
-
-            <button class="contact-btn"
-            style="margin-top:10px;background:#16a34a">
-
-                Claim Item
-
-            </button>
-
+        Claim Item
 
         </a>
+
+
+        
 
 
         {% else %}

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, SubmitField,EmailField,PasswordField,SelectField,DateTimeLocalField,FileField
+from wtforms import BooleanField, StringField, SubmitField,EmailField,PasswordField,SelectField,DateTimeLocalField,FileField, TextAreaField
 from wtforms.validators import DataRequired,Email,Length,EqualTo
 
 class RegistrationForm(FlaskForm):
@@ -102,3 +102,11 @@ class SearchForm(FlaskForm):
 
 
     submit = SubmitField("Search")
+
+class ClaimForm(FlaskForm):
+    message = TextAreaField(
+        "Why do you think this is your item?",
+        validators=[DataRequired()]
+    )
+
+    submit = SubmitField("Send Claim Request")
