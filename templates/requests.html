@@ -35,13 +35,9 @@ box-shadow:0 5px 15px #ccc;
 </h2>
 
 
-<img 
-src="{{ url_for(
-'static',
-filename='uploads/'+req.item.image_path
-)}}"
-width="200"
->
+{% if req.item.image_path %}
+<img src="{{ req.item.image_path }}" width="200">
+{% endif %}
 
 
 

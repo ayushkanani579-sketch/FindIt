@@ -247,6 +247,11 @@ class ClaimRequest(db.Model):
         "FoundItem"
     )
 
+    lost_item=db.relationship(
+        "LostItem",
+        foreign_keys=[lost_item_id]
+    )
+
 
     requester=db.relationship(
         "User"
@@ -438,7 +443,7 @@ def claim(id):
             return redirect(url_for("list"))
     
         lost_report=LostItem.query.filter_by(
-        user_id=current_user.id,).first()
+        user_id=current_user.id,).order_by(LostItem.id.desc()).first()
 
 
         request=ClaimRequest(
